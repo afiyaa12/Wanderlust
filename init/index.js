@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const initdata = require("./data.js");
 const listing = require('../models/listin.js');
 
-const mongo_url = 'mongodb://127.0.0.1:27017/wanderlust';
+// ← temporarily use Atlas URL directly
+const mongo_url = 'mongodb+srv://wanderlustuser:Wanderlust123@cluster0.an1hpcf.mongodb.net/?appName=Cluster0';
 
 main()
     .then(() => console.log('Connected to MongoDB'))
@@ -14,16 +15,13 @@ async function main() {
 
 const initDB = async () => {
     await listing.deleteMany({});
-
-    // FIX: data.js has image as {url: "..."} but schema expects plain string
     const fixedData = initdata.data.map((obj) => ({
         ...obj,
         image: obj.image.url
     }));
-
     await listing.insertMany(fixedData);
     console.log('Database initialized with sample data');
-    mongoose.connection.close(); // FIX: close connection when done
+    mongoose.connection.close();
 };
 
 initDB();

@@ -348,6 +348,18 @@ app.delete('/bookings/:id', isLoggedIn, wrapAsync(async (req, res) => {
     res.redirect('/mybookings');
 }));
 
+// TEMPORARY SEED ROUTE — DELETE AFTER USE
+app.get('/seed', wrapAsync(async (req, res) => {
+    const { data } = require('./init/data.js');
+    await Listing.deleteMany({});
+    const fixedData = data.map((obj) => ({
+        ...obj,
+        image: obj.image.url
+    }));
+    await Listing.insertMany(fixedData);
+    res.send('Database seeded successfully!');
+}));
+
 // ─── 404 ROUTE ───────────────────────────────────────────────────────
 app.all(/.*/, (req, res, next) => {
     next(new ExpressError(404, 'Page not found!'));
