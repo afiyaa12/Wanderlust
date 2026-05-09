@@ -93,3 +93,8 @@ Afiya Jabeen Kamal
 ## License
 
 This project is open source and available under the MIT License.
+
+
+
+<img width="1866" height="1022" alt="Screenshot 2026-05-09 140943" src="https://github.com/user-attachments/assets/8c5a1799-364d-406d-9318-9936ca43f19f" />
+
