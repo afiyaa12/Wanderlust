@@ -1,0 +1,234 @@
+<%layout("layouts/boilerplate")%>
+<div class="row mt-3">
+    <div class="col-8 offset-3">
+        <h3>Listing Details</h3>
+    </div>
+
+    <div class="card col-6 offset-3 show-card">
+        <img src="<%= listing.image %>" 
+             class="card-img-top show-img" 
+             alt="listing_image">
+        <div class="card-body">
+            <p class="card-text">
+                <b><%= listing.title %></b><br>
+                <%= listing.description %><br>
+                <%= listing.location %>, <%= listing.country %><br>
+                <span class="badge bg-secondary">
+                    <%= listing.category || 'Uncategorized' %>
+                </span>
+            </p>
+
+            <!-- Price Section with Tax Calculator -->
+            <div class="mt-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>Price Breakdown</h5>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" 
+                               id="taxToggle" onchange="toggleTax()">
+                        <label class="form-check-label" for="taxToggle">
+                            Show taxes
+                        </label>
+                    </div>
+                </div>
+
+                <table class="table table-sm mt-2">
+                    <tbody>
+                        <tr>
+                            <td>Base price per night</td>
+                            <td id="basePrice">
+                                &#8377;<%= listing.price ? listing.price.toLocaleString('en-IN') : 'N/A' %>
+                            </td>
+                        </tr>
+                        <tr id="taxRow" style="display:none;">
+                            <td>GST (18%)</td>
+                            <td id="taxAmount">
+                                &#8377;<%= listing.price ? Math.round(listing.price * 0.18).toLocaleString('en-IN') : 'N/A' %>
+                            </td>
+                        </tr>
+                        <tr id="totalRow" style="display:none;">
+                            <td><strong>Total per night</strong></td>
+                            <td><strong id="totalAmount">
+                                &#8377;<%= listing.price ? Math.round(listing.price * 1.18).toLocaleString('en-IN') : 'N/A' %>
+                            </strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <!-- Booking Form — for logged in non-owners -->
+<% if(currUser && (!listing.owner || !currUser._id.equals(listing.owner._id))) { %>
+    <div class="card col-6 offset-3 mt-3 p-3">
+        <h5>Book This Listing</h5>
+        <form method="POST" action="/listings/<%=listing._id%>/book"
+              onsubmit="return validateDates()">
+            <div class="row">
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Check-in</label>
+                    <input type="date" name="checkIn" 
+                           id="checkIn"
+                           class="form-control" 
+                           min="<%= new Date().toISOString().split('T')[0] %>"
+                           required
+                           onchange="calculateTotal()">
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label class="form-label">Check-out</label>
+                    <input type="date" name="checkOut" 
+                           id="checkOut"
+                           class="form-control"
+                           min="<%= new Date().toISOString().split('T')[0] %>"
+                           required
+                           onchange="calculateTotal()">
+                </div>
+            </div>
+
+            <!-- Price Summary -->
+            <div id="priceSummary" style="display:none;" 
+                 class="alert alert-info">
+                <span id="nightsCount"></span> nights × 
+                &#8377;<%= listing.price ? listing.price.toLocaleString('en-IN') : 0 %> = 
+                <strong>&#8377;<span id="bookingTotal"></span></strong>
+            </div>
+
+            <button class="btn btn-dark w-100">Confirm Booking</button>
+        </form>
+    </div>
+<% } %>
+
+    <!-- Owner buttons -->
+    <% if(currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
+        <div class="btns mt-3">
+            <a href="/listings/<%=listing._id%>/edit" 
+               class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
+            <form method="POST" 
+                  action="/listings/<%=listing._id%>?_method=DELETE"
+                  class="d-inline">
+                <button class="btn btn-dark">Delete</button>
+            </form>
+        </div>
+    <% } %>
+
+    <!-- Wishlist Button — for logged in non-owners -->
+<% if(currUser) { %>
+    <form method="POST" 
+          action="/wishlist/<%=listing._id%>" 
+          class="d-inline mt-3 offset-3">
+        <% 
+            // check if this listing is already in user's wishlist
+            const isWishlisted = currUser.wishlist && 
+            currUser.wishlist.some(id => id.equals(listing._id)); 
+        %>
+        <button class="btn <%= isWishlisted ? 'btn-danger' : 'btn-outline-danger' %>">
+            <%= isWishlisted ? '❤️ Wishlisted' : '🤍 Add to Wishlist' %>
+        </button>
+    </form>
+<% } %>
+
+    <br/>
+
+    <!-- Review Form — only for logged in users who don't own the listing -->
+    <% if(currUser && (!listing.owner || !currUser._id.equals(listing.owner._id))) { %>
+        <div class="col-6 offset-3 mt-3">
+            <h4>Leave a Review</h4>
+            <form method="POST" action="/listings/<%=listing._id%>/reviews">
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select name="review[rating]" class="form-select" required>
+                        <option value="">Select rating</option>
+                        <option value="5">⭐⭐⭐⭐⭐ Amazing</option>
+                        <option value="4">⭐⭐⭐⭐ Good</option>
+                        <option value="3">⭐⭐⭐ Average</option>
+                        <option value="2">⭐⭐ Poor</option>
+                        <option value="1">⭐ Terrible</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea name="review[comment]" 
+                              class="form-control" 
+                              rows="3" required></textarea>
+                </div>
+                <button class="btn btn-dark">Submit Review</button>
+            </form>
+        </div>
+    <% } %>
+
+    <br/>
+
+    <!-- Display existing reviews -->
+    <div class="col-6 offset-3 mt-3">
+        <h4>Reviews</h4>
+        <% if(listing.reviews.length === 0) { %>
+            <p class="text-muted">No reviews yet. Be the first to review!</p>
+        <% } %>
+        <% for(let review of listing.reviews) { %>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6>@<%= review.author.username %></h6>
+                    <p>Rating: <%= review.rating %> ⭐</p>
+                    <p><%= review.comment %></p>
+                    <!-- Only review author can delete -->
+                    <% if(currUser && currUser._id.equals(review.author._id)) { %>
+                        <form method="POST" 
+                              action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
+                            <button class="btn btn-sm btn-danger">
+                                Delete Review
+                            </button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+</div>
+
+<!-- Tax Calculator Script -->
+<script>
+    // existing tax toggle function
+    function toggleTax() {
+        const taxRow = document.getElementById('taxRow');
+        const totalRow = document.getElementById('totalRow');
+        const isChecked = document.getElementById('taxToggle').checked;
+        if(isChecked) {
+            taxRow.style.display = 'table-row';
+            totalRow.style.display = 'table-row';
+        } else {
+            taxRow.style.display = 'none';
+            totalRow.style.display = 'none';
+        }
+    }
+
+    // NEW: booking price calculator
+    function calculateTotal() {
+        const checkIn = document.getElementById('checkIn').value;
+        const checkOut = document.getElementById('checkOut').value;
+        const pricePerNight = <%= listing.price || 0 %>;
+
+        if(checkIn && checkOut) {
+            const nights = Math.ceil(
+                (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)
+            );
+            if(nights > 0) {
+                document.getElementById('nightsCount').textContent = nights;
+                document.getElementById('bookingTotal').textContent = 
+                    (nights * pricePerNight).toLocaleString('en-IN');
+                document.getElementById('priceSummary').style.display = 'block';
+            }
+        }
+    }
+
+    // NEW: validate dates before submit
+    function validateDates() {
+        const checkIn = new Date(document.getElementById('checkIn').value);
+        const checkOut = new Date(document.getElementById('checkOut').value);
+        if(checkOut <= checkIn) {
+            alert('Check-out date must be after check-in date!');
+            return false;
+        }
+        return true;
+    }
+</script>

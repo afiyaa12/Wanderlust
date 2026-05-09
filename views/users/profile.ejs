@@ -1,0 +1,92 @@
+<%layout("layouts/boilerplate")%>
+<div class="row mt-4">
+
+    <!-- Profile Header -->
+    <div class="col-8 offset-2">
+        <div class="card p-4 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <!-- Avatar circle with first letter of username -->
+                <div class="rounded-circle bg-dark text-white d-flex 
+                            align-items-center justify-content-center"
+                     style="width:60px; height:60px; font-size:1.5rem;">
+                    <%= currUser.username[0].toUpperCase() %>
+                </div>
+                <div>
+                    <h3 class="mb-0">@<%= user.username %></h3>
+                    <p class="text-muted mb-0"><%= user.email %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Listings -->
+    <div class="col-8 offset-2 mb-4">
+        <h4>My Listings 
+            <span class="badge bg-dark"><%= userListings.length %></span>
+        </h4>
+
+        <% if(userListings.length === 0) { %>
+            <p class="text-muted">You haven't created any listings yet. 
+                <a href="/listings/new">Create one!</a>
+            </p>
+        <% } else { %>
+            <div class="row row-cols-md-2 g-3">
+                <% for(let listing of userListings) { %>
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="<%= listing.image %>" 
+                                 class="card-img-top" 
+                                 style="height:150px; object-fit:cover;"
+                                 alt="listing image">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <%= listing.title %>
+                                </h6>
+                                <p class="card-text text-muted">
+                                    <%= listing.location %>, <%= listing.country %>
+                                </p>
+                                <p class="card-text">
+                                    &#8377;<%= listing.price ? listing.price.toLocaleString('en-IN') : 'N/A' %>/night
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="/listings/<%= listing._id %>" 
+                                       class="btn btn-sm btn-dark">View</a>
+                                    <a href="/listings/<%= listing._id %>/edit" 
+                                       class="btn btn-sm btn-outline-dark">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- My Reviews -->
+    <div class="col-8 offset-2 mb-4">
+        <h4>My Reviews 
+            <span class="badge bg-dark"><%= userReviews.length %></span>
+        </h4>
+
+        <% if(userReviews.length === 0) { %>
+            <p class="text-muted">You haven't written any reviews yet.</p>
+        <% } else { %>
+            <% for(let review of userReviews) { %>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="card-title">
+                                <%= review.rating %> ⭐
+                            </h6>
+                            <small class="text-muted">
+                                <%= review.createdAt.toDateString() %>
+                            </small>
+                        </div>
+                        <p class="card-text"><%= review.comment %></p>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
+
+</div>

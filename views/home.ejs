@@ -1,0 +1,72 @@
+<%layout("layouts/boilerplate")%>
+<div class="text-center mt-5">
+    <h1 class="display-3 fw-bold">Find your next stay</h1>
+    <p class="lead text-muted">
+        Discover unique places to stay around the world
+    </p>
+    <a href="/listings" class="btn btn-dark btn-lg mt-3">
+        Explore Listings
+    </a>
+</div>
+
+<!-- Stats Section -->
+<div class="row text-center mt-5">
+    <div class="col-md-4">
+        <h2 class="fw-bold">1000+</h2>
+        <p class="text-muted">Listings worldwide</p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="fw-bold">50+</h2>
+        <p class="text-muted">Countries</p>
+    </div>
+    <div class="col-md-4">
+        <h2 class="fw-bold">500+</h2>
+        <p class="text-muted">Happy guests</p>
+    </div>
+</div>
+
+<!-- Category Cards -->
+<div class="row mt-5">
+    <h3 class="mb-3">Browse by Category</h3>
+    <div class="row row-cols-md-3 g-3">
+        <div class="col">
+            <a href="/listings?category=Beaches" class="text-decoration-none">
+                <div class="card text-white text-center"
+                     style="background: linear-gradient(rgba(0,0,0,0.3), 
+                            rgba(0,0,0,0.3)), 
+                            url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400') 
+                            center/cover;">
+                    <div class="card-body py-5">
+                        <h4>🏖️ Beaches</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/listings?category=Mountains" class="text-decoration-none">
+                <div class="card text-white text-center"
+                     style="background: linear-gradient(rgba(0,0,0,0.3), 
+                            rgba(0,0,0,0.3)), 
+                            url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400') 
+                            center/cover;">
+                    <div class="card-body py-5">
+                        <h4>🏔️ Mountains</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="/listings?category=Cities" class="text-decoration-none">
+                <div class="card text-white text-center"
+                     style="background: linear-gradient(rgba(0,0,0,0.3), 
+                            rgba(0,0,0,0.3)), 
+                            url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400') 
+                            center/cover;">
+                    <div class="card-body py-5">
+                        <h4>🏙️ Cities</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

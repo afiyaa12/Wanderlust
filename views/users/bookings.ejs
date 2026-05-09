@@ -1,0 +1,63 @@
+<%layout("layouts/boilerplate")%>
+<div class="row mt-4">
+    <div class="col-8 offset-2">
+        <h3>My Bookings 🗓️</h3>
+
+        <% if(bookings.length === 0) { %>
+            <div class="text-center mt-5">
+                <h5 class="text-muted">No bookings yet!</h5>
+                <a href="/listings" class="btn btn-dark mt-3">
+                    Explore Listings
+                </a>
+            </div>
+        <% } else { %>
+            <% for(let booking of bookings) { %>
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <img src="<%= booking.listing.image %>" 
+                                 class="img-fluid rounded-start h-100"
+                                 style="object-fit:cover;"
+                                 alt="listing image">
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= booking.listing.title %>
+                                </h5>
+                                <p class="card-text text-muted">
+                                    <%= booking.listing.location %>, 
+                                    <%= booking.listing.country %>
+                                </p>
+                                <p class="card-text">
+                                    📅 Check-in: 
+                                    <b><%= booking.checkIn.toDateString() %></b>
+                                    <br>
+                                    📅 Check-out: 
+                                    <b><%= booking.checkOut.toDateString() %></b>
+                                    <br>
+                                    🌙 <%= booking.nights %> nights
+                                    <br>
+                                    💰 Total: 
+                                    <b>&#8377;<%= booking.totalPrice.toLocaleString('en-IN') %></b>
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="/listings/<%= booking.listing._id %>" 
+                                       class="btn btn-sm btn-dark">
+                                       View Listing
+                                    </a>
+                                    <form method="POST" 
+                                          action="/bookings/<%=booking._id%>?_method=DELETE">
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            Cancel Booking
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
+</div>

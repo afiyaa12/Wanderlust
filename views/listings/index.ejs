@@ -1,0 +1,89 @@
+<%layout("layouts/boilerplate")%>
+<body>
+<!-- Search Bar -->
+<div class="row mt-3 mb-2">
+    <div class="col-8 offset-2">
+        <form method="GET" action="/listings" class="d-flex gap-2">
+            <input type="text" name="search" 
+                   placeholder="Search by title or location..." 
+                   value="<%= search || '' %>"
+                   class="form-control">
+            <button class="btn btn-dark flex-shrink-0">Search</button>
+            <a href="/listings" class="btn btn-outline-dark flex-shrink-0">Clear</a>
+        </form>
+    </div>
+</div>
+<!-- Category Filter Bar -->
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <div class="d-flex gap-3 overflow-auto pb-2 category-bar">
+            <a href="/listings" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🌍 All
+            </a>
+            <a href="/listings?category=Beaches" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🏖️ Beaches
+            </a>
+            <a href="/listings?category=Mountains" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🏔️ Mountains
+            </a>
+            <a href="/listings?category=Cities" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🏙️ Cities
+            </a>
+            <a href="/listings?category=Castles" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🏰 Castles
+            </a>
+            <a href="/listings?category=Camping" 
+               class="btn btn-outline-dark flex-shrink-0">
+                ⛺ Camping
+            </a>
+            <a href="/listings?category=Farms" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🌾 Farms
+            </a>
+            <a href="/listings?category=Arctic" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🧊 Arctic
+            </a>
+            <a href="/listings?category=Domes" 
+               class="btn btn-outline-dark flex-shrink-0">
+                🔮 Domes
+            </a>
+            <a href="/listings?category=Boats" 
+               class="btn btn-outline-dark flex-shrink-0">
+                ⛵ Boats
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Listings Grid -->
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+    <% for(let listing of alllistings){ %>
+        <a href="/listings/<%=listing._id%>" class="listing-link">
+            <div class="card col">
+                <img src="<%= listing.image %>" 
+                     class="card-img-top"
+                     alt="listing_image"
+                     style="height: 20rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text">
+                        <b><%= listing.title %></b><br/>
+                        <!-- Show category badge -->
+                        <span class="badge bg-secondary">
+                            <%= listing.category || 'Uncategorized' %>
+                        </span><br/>
+                        &#8377;<%= listing.price ? listing.price.toLocaleString('en-IN') : 'Price not available' %>/night
+                    </p>
+                </div>
+            </div>
+        </a>
+    <% } %>
+</div>
+
+</body>

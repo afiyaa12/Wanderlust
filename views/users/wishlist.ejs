@@ -1,0 +1,53 @@
+<%layout("layouts/boilerplate")%>
+<div class="row mt-4">
+    <div class="col-8 offset-2">
+        <h3>My Wishlist ❤️</h3>
+
+        <% if(wishlist.length === 0) { %>
+            <div class="text-center mt-5">
+                <h5 class="text-muted">Your wishlist is empty!</h5>
+                <a href="/listings" class="btn btn-dark mt-3">
+                    Explore Listings
+                </a>
+            </div>
+        <% } else { %>
+            <div class="row row-cols-md-2 g-3 mt-2">
+                <% for(let listing of wishlist) { %>
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="<%= listing.image %>" 
+                                 class="card-img-top"
+                                 style="height:150px; object-fit:cover;"
+                                 alt="listing image">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <%= listing.title %>
+                                </h6>
+                                <p class="card-text text-muted">
+                                    <%= listing.location %>, 
+                                    <%= listing.country %>
+                                </p>
+                                <p class="card-text">
+                                    &#8377;<%= listing.price ? listing.price.toLocaleString('en-IN') : 'N/A' %>/night
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="/listings/<%= listing._id %>" 
+                                       class="btn btn-sm btn-dark">
+                                       View
+                                    </a>
+                                    <!-- Remove from wishlist -->
+                                    <form method="POST" 
+                                          action="/wishlist/<%= listing._id %>">
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            Remove ❤️
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>
